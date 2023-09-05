@@ -1,0 +1,30 @@
+package by.ycovich.dao;
+
+import by.ycovich.model.Person;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
+public class PersonDAO {
+
+    private static int PEOPLE_CNT;
+    private List<Person> people;
+
+    {
+        people = new ArrayList<>();
+
+        people.add(new Person(++PEOPLE_CNT, "Larry"));
+        people.add(new Person(++PEOPLE_CNT, "Bob"));
+        people.add(new Person(++PEOPLE_CNT, "Paul"));
+    }
+
+    public List<Person> getPeople(){
+        return people;
+    }
+
+    public Person getPerson(int id){
+        return people.stream().filter(person -> person.getId() == id).findAny().orElse(null);
+    }
+}
