@@ -3,9 +3,11 @@ package by.ycovich.controller;
 
 import by.ycovich.dao.PersonDAO;
 import by.ycovich.model.Person;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -22,7 +24,10 @@ public class PeopleController {
         return "people/newbie";
     }
     @PostMapping()
-    public String create(@ModelAttribute("person") Person person){
+    public String create(@ModelAttribute("person") @Valid Person person,
+                         BindingResult bindingResult){
+        if (bindingResult.hasErrors()) return "people/newbie";
+
         personDAO.save(person);
         return "redirect:/people";
     }
@@ -46,8 +51,11 @@ public class PeopleController {
     }
 
     @PatchMapping("/{id}")
-    public String update(@ModelAttribute("person") Person person,
+    public String update(@ModelAttribute("person") @Valid Person person,
+                         BindingResult bindingResult,
                          @PathVariable("id") int id){
+        if (bindingResult.hasErrors()) return "people/edit";
+
         personDAO.update(id, person);
         return "redirect:/people";
     }
