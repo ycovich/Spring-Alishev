@@ -1,47 +1,45 @@
 package by.ycovich.dao;
 
 import by.ycovich.model.Person;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class PersonDAO {
 
-    private static int PEOPLE_CNT;
-    private List<Person> people;
+    private final JdbcTemplate jdbcTemplate;
 
-    {
-        people = new ArrayList<>();
-
-        people.add(new Person(++PEOPLE_CNT, "Larry", 66, "larry@gmail.com"));
-        people.add(new Person(++PEOPLE_CNT, "Bob", 50, "bob@mail.ru"));
-        people.add(new Person(++PEOPLE_CNT, "Paul", 23, "paul@gmail.com"));
+    @Autowired
+    public PersonDAO(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public List<Person> getPeople(){
-        return people;
+        return jdbcTemplate.query("SELECT * FROM person",
+                new BeanPropertyRowMapper<>(Person.class));
     }
 
     public Person getPerson(int id){
-        return people.stream().filter(person -> person.getId() == id).findAny().orElse(null);
+        return jdbcTemplate.query("SELECT * FROM person WHERE id=?",
+                        new Object[]{id}, new BeanPropertyRowMapper<>(Person.class))
+                .stream().findAny().orElse(null);
     }
 
     public void save(Person person){
-        person.setId(++PEOPLE_CNT);
-        people.add(person);
+        jdbcTemplate.update("INSERT INTO person(name, age, email) VALUES(?,?,?)",
+                person.getName(), person.getAge(), person.getEmail());
     }
 
     public void update(int id, Person updPerson){
-        Person personToBeUpd = getPerson(id);
-
-        personToBeUpd.setName(updPerson.getName());
-        personToBeUpd.setAge(updPerson.getAge());
-        personToBeUpd.setEmail(updPerson.getEmail());
+        jdbcTemplate.update("UPDATE person SET name=?, age=?, email=? WHERE id=?",
+                updPerson.getName(), updPerson.getAge(), updPerson.getEmail(), id);
     }
 
     public void delete(int id){
-        people.removeIf(p -> p.getId() == id);
+        jdbcTemplate.update("DELETE FROM person WHERE id=?", id);
     }
 }
