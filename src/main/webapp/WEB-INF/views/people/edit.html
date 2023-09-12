@@ -17,6 +17,9 @@
         <input type="text" th:field="*{email}" id="email"/>
         <div style="color: crimson" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">invalid email input</div>
         <br/>
+        <input type="text" th:field="*{address}" id="address"/>
+        <div style="color: crimson" th:if="${#fields.hasErrors('address')}" th:errors="*{address}">invalid address input</div>
+        <br/>
         <input type="submit" value="save changes">
     </form>
 </body>

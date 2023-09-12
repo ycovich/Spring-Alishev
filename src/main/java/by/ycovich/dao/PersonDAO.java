@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class PersonDAO {
@@ -23,6 +24,11 @@ public class PersonDAO {
                 new BeanPropertyRowMapper<>(Person.class));
     }
 
+    public Optional<Person> getPerson(String email){
+        return jdbcTemplate.query("SELECT * FROM person WHERE email=?", new Object[] {email},
+                new BeanPropertyRowMapper<>(Person.class)).stream().findAny();
+    }
+
     public Person getPerson(int id){
         return jdbcTemplate.query("SELECT * FROM person WHERE id=?",
                         new Object[]{id}, new BeanPropertyRowMapper<>(Person.class))
@@ -30,13 +36,13 @@ public class PersonDAO {
     }
 
     public void save(Person person){
-        jdbcTemplate.update("INSERT INTO person(name, age, email) VALUES(?,?,?)",
-                person.getName(), person.getAge(), person.getEmail());
+        jdbcTemplate.update("INSERT INTO person(name, age, email, address) VALUES(?,?,?,?)",
+                person.getName(), person.getAge(), person.getEmail(), person.getAddress());
     }
 
     public void update(int id, Person updPerson){
-        jdbcTemplate.update("UPDATE person SET name=?, age=?, email=? WHERE id=?",
-                updPerson.getName(), updPerson.getAge(), updPerson.getEmail(), id);
+        jdbcTemplate.update("UPDATE person SET name=?, age=?, email=?, address=? WHERE id=?",
+                updPerson.getName(), updPerson.getAge(), updPerson.getEmail(), updPerson.getAddress(), id);
     }
 
     public void delete(int id){

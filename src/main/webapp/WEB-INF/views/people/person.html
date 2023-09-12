@@ -5,7 +5,7 @@
     <title>user</title>
 </head>
 <body>
-    <p th:text="${person.getName()+', '+person.getAge()+', '+person.getEmail()}">name, age, email</p>
+    <p th:text="${person.getName()+', '+person.getAge()+', '+person.getEmail()+', '+person.getAddress()}">name, age, email, address</p>
     <p th:text="${person.getId()}">id</p>
 
     <form th:action="@{/people/{id}/edit (id=${person.getId()})}">
